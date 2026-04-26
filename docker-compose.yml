@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - OPENMETADATA_HOST=${OPENMETADATA_HOST:-http://openmetadata-server:8585}
+      - OPENMETADATA_TOKEN=${OPENMETADATA_TOKEN:-}
+      - DEMO_MODE=${DEMO_MODE:-true}
+    restart: unless-stopped
+    networks:
+      - om-dashboard
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - om-dashboard
+
+networks:
+  om-dashboard:
+    driver: bridge
